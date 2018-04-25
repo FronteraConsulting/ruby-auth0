@@ -16,6 +16,8 @@ module Auth0
         # @param include_fields [boolean] True if the fields specified are to be included in the result, false otherwise.
         # @param q [string] Query in Lucene query string syntax. Only fields in app_metadata, user_metadata or the
         # normalized user profile are searchable.
+        # @param search_engine [symbol] The version of the search engine. Possible options are :v1, :v2, or :v3. Defaults
+        # to :v3 if q parameter is present.
         #
         # @return [json] Returns the list of existing users.
         def users(options = {})
@@ -27,9 +29,10 @@ module Auth0
             connection:     options.fetch(:connection, nil),
             fields:         options.fetch(:fields, nil),
             include_fields: options.fetch(:include_fields, nil),
-            q:              options.fetch(:q, nil)
+            q:              options.fetch(:q, nil),
+            search_engine:  options.fetch(:search_engine, nil)
           }
-          request_params[:search_engine] = :v2 if request_params[:q]
+          request_params[:search_engine] = :v3 if request_params[:q] and request_params[:search_engine].nil?
           get(users_path, request_params)
         end
         alias get_users users
